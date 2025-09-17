@@ -1,13 +1,21 @@
-
 import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
+  const navigate = useNavigate();
+
+  const navItems = [
+    { name: "Home", path: "/" },
+    { name: "Report Issue", path: "/report" },
+    { name: "Contact Us", path: "/ContactUS" },
+    { name: "About", path: "/about" },
+  ];
 
   return (
     <header
       className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#d4e6da] px-10 py-3 shadow-md relative z-50"
-      style={{ backgroundColor: "#e7f3eb" }} // ✅ Navbar background
+      style={{ backgroundColor: "#e7f3eb" }}
     >
       {/* Logo + Title */}
       <div className="flex items-center gap-4 text-[#0e1b12]">
@@ -25,30 +33,34 @@ const Navbar = () => {
             />
           </svg>
         </div>
-        <a
-          href="#home"
+        <NavLink
+          to="/"
           className="text-[#0e1b12] text-2xl font-extrabold leading-tight tracking-[-0.02em] transition-transform duration-300 hover:scale-110 hover:drop-shadow-lg"
         >
           Crowd-Care
-        </a>
+        </NavLink>
       </div>
 
       {/* Navigation + Actions */}
       <div className="flex flex-1 justify-end gap-6 items-center">
         {/* Nav Links */}
-        <div className="flex items-center gap-9">
-          {["Home", "Report Issue", "Contact Us", "About"].map((item) => (
-            <a
-              key={item}
-              href="#"
-              className="text-[#0e1612] text-sm font-medium relative group transition-colors duration-300 hover:text-rose-600"
+        <nav className="flex items-center gap-9">
+          {navItems.map(({ name, path }) => (
+            <NavLink
+              key={name}
+              to={path}
+              className={({ isActive }) =>
+                `text-[#0e1612] text-sm font-medium relative group transition-colors duration-300 hover:text-rose-600 ${
+                  isActive ? "font-bold underline" : ""
+                }`
+              }
             >
-              {item}
+              {name}
               {/* Underline animation */}
               <span className="absolute left-0 bottom-[-4px] h-[2px] w-0 bg-rose-500 transition-all duration-300 group-hover:w-full"></span>
-            </a>
+            </NavLink>
           ))}
-        </div>
+        </nav>
 
         {/* Search (Expandable Input with hover + click) */}
         <div
@@ -65,6 +77,7 @@ const Navbar = () => {
             <button
               onClick={() => setShowSearch(!showSearch)}
               className="flex items-center justify-center text-[#0e1b12] size-10 transition-all duration-300 hover:text-rose-500"
+              aria-label="Toggle search"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +103,10 @@ const Navbar = () => {
         </div>
 
         {/* Notification Button */}
-        <button className="flex items-center justify-center rounded-xl h-10 w-10 bg-[#f5fdf7] border border-[#d8eedd] text-[#0e1b12] transition-all duration-300 hover:bg-[#e1f3e6] hover:border-green-500 hover:shadow-md hover:shadow-green-200">
+        <button
+          className="flex items-center justify-center rounded-xl h-10 w-10 bg-[#f5fdf7] border border-[#d8eedd] text-[#0e1b12] transition-all duration-300 hover:bg-[#e1f3e6] hover:border-green-500 hover:shadow-md hover:shadow-green-200"
+          aria-label="Notifications"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20px"
@@ -107,19 +123,19 @@ const Navbar = () => {
           Login
         </button>
 
-        {/* Profile Image */}
-        <div
+        {/* Profile Image Button */}
+        <button
+          onClick={() => navigate("/profile")}
+          aria-label="Profile"
           className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-transparent hover:border-rose-400 hover:scale-105 transition-all duration-300 cursor-pointer"
           style={{
             backgroundImage:
               'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDTsSh2u7zyRAr9wvBLVZ0uDgQNgpqPvDRTMLp00QBs7bwurh6L3xOKC0btgofX_VdovjdQ1OKVlfG4RAteDEDaFLzfKD9am8ii5Aw_TrXcr_tNMvUhDm2EwWu5GAmeZH81BlbcUvNf4Oxr4JagcP0Teag3MjZzvQ3rzFLvuK-zrO66_AbGuhw44Q1XsWAgie-85GNRCIUrpunToLrjtAdf6PPK7bo73MZYnZLxOsVx53FQ2pGeR3Hmc8v3OS_rUpc_fsqLmOoqfOzh")',
           }}
-        ></div>
+        />
       </div>
     </header>
   );
 };
 
 export default Navbar;
-
-
