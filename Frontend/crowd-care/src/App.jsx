@@ -1,12 +1,29 @@
-import React from 'react'
-import Navbar from './Components/Navbar'
+
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./Components/Navbar";
+import Footer from "./Components/Footer";
+import ReportIssues from "./Pages/ReportIssues";
+import About from "./Pages/About";
+import Home from "./Pages/Home";
+import ContactUS from "./Pages/ContactUS";
 
 const App = () => {
   return (
-    <div>
-      <Navbar/>
-    </div>
-  )
-}
-
-export default App
+    <Router>
+      <div className="min-h-screen flex flex-col justify-between">
+        <Navbar />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/report" element={<ReportIssues />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/ContactUS" element={<ContactUS />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
+  );
+};
+export default App;
