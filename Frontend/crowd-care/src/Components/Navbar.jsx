@@ -36,48 +36,56 @@ const Navbar = () => {
       <div className="flex flex-1 justify-end gap-6 items-center">
         {/* Nav Links */}
         <div className="flex items-center gap-9">
-          {["Home", "Services", "Report Issue", "Contact Us", "About"].map(
-            (item) => (
-              <a
-                key={item}
-                href="#"
-                className="text-[#0e1612] text-sm font-medium relative group transition-colors duration-300 hover:text-rose-600"
-              >
-                {item}
-                {/* Underline animation */}
-                <span className="absolute left-0 bottom-[-4px] h-[2px] w-0 bg-rose-500 transition-all duration-300 group-hover:w-full"></span>
-              </a>
-            )
-          )}
+          {["Home", "Report Issue", "Contact Us", "About"].map((item) => (
+            <a
+              key={item}
+              href="#"
+              className="text-[#0e1612] text-sm font-medium relative group transition-colors duration-300 hover:text-rose-600"
+            >
+              {item}
+              {/* Underline animation */}
+              <span className="absolute left-0 bottom-[-4px] h-[2px] w-0 bg-rose-500 transition-all duration-300 group-hover:w-full"></span>
+            </a>
+          ))}
         </div>
 
-        {/* Search Button */}
-        <div className="relative">
-          <button
-            onClick={() => setShowSearch(!showSearch)}
-            className="flex items-center justify-center rounded-xl bg-[#f9f9f9] border border-[#ddd] text-[#0e1b12] size-10 transition-all duration-300 hover:bg-[#f1f1f1] hover:border-rose-400 hover:shadow-md hover:shadow-rose-200"
+        {/* Search (Expandable Input with hover + click) */}
+        <div
+          className="relative flex items-center"
+          onMouseEnter={() => setShowSearch(true)}
+          onMouseLeave={() => setShowSearch(false)}
+        >
+          <div
+            className={`flex items-center rounded-xl border border-[#ddd] bg-[#f9f9f9] overflow-hidden transition-all duration-300 ease-in-out ${
+              showSearch ? "w-56 px-2" : "w-10"
+            }`}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18px"
-              height="18px"
-              fill="currentColor"
-              viewBox="0 0 24 24"
+            {/* Icon */}
+            <button
+              onClick={() => setShowSearch(!showSearch)}
+              className="flex items-center justify-center text-[#0e1b12] size-10 transition-all duration-300 hover:text-rose-500"
             >
-              <path d="M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z"></path>
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18px"
+                height="18px"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M10 2a8 8 0 105.293 14.293l4.707 4.707 1.414-1.414-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z"></path>
+              </svg>
+            </button>
 
-          {/* Search Panel */}
-          {showSearch && (
-            <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg shadow-gray-300 rounded-lg p-2 animate-fadeIn">
+            {/* Expanding Input */}
+            {showSearch && (
               <input
                 type="text"
-                placeholder="Enter your search..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400"
+                autoFocus
+                placeholder="Enter your text here..."
+                className="flex-1 ml-2 bg-transparent border-none outline-none text-sm text-[#0e1b12] placeholder-gray-500"
               />
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Notification Button */}
