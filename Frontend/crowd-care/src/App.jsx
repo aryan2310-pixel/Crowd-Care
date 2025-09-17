@@ -1,4 +1,3 @@
-
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar";
@@ -19,6 +18,8 @@ const App = () => {
             <Route path="/report" element={<ReportIssues />} />
             <Route path="/about" element={<About />} />
             <Route path="/ContactUS" element={<ContactUS />} />
+            {/* Optional: Add 404 route */}
+            {/* <Route path="*" element={<NotFound />} /> */}
           </Routes>
         </main>
         <Footer />
@@ -26,4 +27,5 @@ const App = () => {
     </Router>
   );
 };
+
 export default App;
