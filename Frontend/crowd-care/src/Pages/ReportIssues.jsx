@@ -1,17 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const ReportIssues = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    category: "",
+    category: "Other", // auto-set default category
     location: "",
   });
 
   const [mediaFiles, setMediaFiles] = useState(null);
   const [statusMsg, setStatusMsg] = useState("");
 
-  // Handle input changes
+  // Get user's geolocation on component mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const locationStr = `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)}`;
+          setFormData((prev) => ({ ...prev, location: locationStr }));
+        },
+        (error) => {
+          console.warn("Geolocation error:", error);
+          // Optional: set a fallback location or leave empty
+        }
+      );
+    }
+  }, []);
+
+  // Handle text input changes (title, description)
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -19,12 +36,11 @@ const ReportIssues = () => {
     }));
   };
 
-  // Handle form submit
+  // Form submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate required fields
-    if (!formData.title || !formData.description || !formData.category) {
+    if (!formData.title || !formData.description) {
       setStatusMsg("Please fill all required fields.");
       return;
     }
@@ -32,8 +48,8 @@ const ReportIssues = () => {
     const data = new FormData();
     data.append("title", formData.title);
     data.append("description", formData.description);
-    data.append("category", formData.category);
-    data.append("location", formData.location);
+    data.append("category", formData.category); // auto-set
+    data.append("location", formData.location); // auto-detected
 
     if (mediaFiles) {
       for (let i = 0; i < mediaFiles.length; i++) {
@@ -49,7 +65,7 @@ const ReportIssues = () => {
       const result = await response.json();
       if (result.success) {
         setStatusMsg("Issue reported successfully!");
-        setFormData({ title: "", description: "", category: "", location: "" });
+        setFormData({ title: "", description: "", category: "Other", location: "" });
         setMediaFiles(null);
         e.target.reset();
       } else {
@@ -62,10 +78,7 @@ const ReportIssues = () => {
 
   return (
     <div className="min-h-screen bg-[#f8fcf8] py-10 px-4 md:px-0 flex justify-center">
-      <form
-        className="w-full max-w-2xl bg-[#fcfefc] rounded-xl shadow p-8"
-        onSubmit={handleSubmit}
-      >
+      <form className="w-full max-w-2xl bg-[#fcfefc] rounded-xl shadow p-8" onSubmit={handleSubmit}>
         <h1 className="text-2xl font-bold text-[#183a24] mb-8">Report a New Issue</h1>
 
         {/* Issue Title */}
@@ -96,50 +109,19 @@ const ReportIssues = () => {
           />
         </div>
 
-        {/* Category */}
-        <div className="mb-5">
-          <label className="block text-[#213e27] font-semibold mb-1">Category</label>
-          <select
-            name="category"
-            className="w-full border border-[#d9eede] rounded-md bg-[#f8fcf8] px-4 py-2 text-[#1a5425] focus:outline-none focus:border-[#47c375] appearance-none transition"
-            value={formData.category}
-            onChange={handleChange}
-            required
-          >
-            <option value="" disabled>
-              Select a category
-            </option>
-            <option>Pothole</option>
-            <option>Streetlight</option>
-            <option>Garbage</option>
-            <option>Waterlogging</option>
-            <option>Other</option>
-          </select>
-        </div>
+        {/* Category (read-only, hidden input) */}
+        <input type="hidden" name="category" value={formData.category} />
 
-        {/* Map */}
+        {/* Location (read-only display) */}
         <div className="mb-5">
-          <img
-            src="https://maps.gstatic.com/tactile/basepage/pegman_sherlock.png"
-            alt="Map preview"
-            className="w-full h-80 object-cover rounded-md"
-            style={{
-              background:
-                "url('https://upload.wikimedia.org/wikipedia/commons/e/ec/Map_of_San_Francisco.png') center/cover no-repeat",
-            }}
-          />
-        </div>
-
-        {/* Location */}
-        <div className="mb-5">
-          <label className="block text-[#213e27] font-semibold mb-1">Location</label>
+          <label className="block text-[#213e27] font-semibold mb-1">Location (Auto-detected)</label>
           <input
             type="text"
             name="location"
-            placeholder="Enter address or use map"
-            className="w-full border border-[#d9eede] rounded-md bg-[#f8fcf8] px-4 py-2 focus:outline-none focus:border-[#47c375] text-[#1a5425] placeholder-[#85bba0] transition"
             value={formData.location}
-            onChange={handleChange}
+            readOnly
+            className="w-full border border-[#d9eede] rounded-md bg-[#f0f6f0] px-4 py-2 text-[#1a5425] placeholder-[#85bba0] cursor-not-allowed"
+            placeholder="Detecting location..."
           />
         </div>
 
@@ -155,6 +137,7 @@ const ReportIssues = () => {
           />
         </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
           className="bg-[#11c246] text-white font-semibold px-8 py-2 rounded-md transition hover:bg-[#069936] float-right"
@@ -162,9 +145,8 @@ const ReportIssues = () => {
           Submit Report
         </button>
 
-        {statusMsg && (
-          <p className="mt-4 text-[#209125] font-semibold clear-both">{statusMsg}</p>
-        )}
+        {/* Status message */}
+        {statusMsg && <p className="mt-4 text-[#209125] font-semibold clear-both">{statusMsg}</p>}
       </form>
     </div>
   );
