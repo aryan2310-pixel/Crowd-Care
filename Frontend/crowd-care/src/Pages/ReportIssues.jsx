@@ -4,31 +4,43 @@ const ReportIssues = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    category: "Other", // auto-set default category
+    category: "Other", // auto-set category
     location: "",
   });
 
   const [mediaFiles, setMediaFiles] = useState(null);
   const [statusMsg, setStatusMsg] = useState("");
 
-  // Get user's geolocation on component mount
+  // Use LocationIQ reverse geocoding with error logging
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const locationStr = `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)}`;
-          setFormData((prev) => ({ ...prev, location: locationStr }));
-        },
-        (error) => {
-          console.warn("Geolocation error:", error);
-          // Optional: set a fallback location or leave empty
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const response = await fetch(
+            `https://us1.locationiq.com/v1/reverse.php?key=pk.173a5764192bb4346b83776a611e403c&lat=${latitude}&lon=${longitude}&format=json`
+          );
+          const data = await response.json();
+          if (data && data.display_name) {
+            setFormData((prev) => ({ ...prev, location: data.display_name }));
+          } else {
+            setFormData((prev) => ({
+              ...prev,
+              location: `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)}`,
+            }));
+          }
+        } catch (error) {
+          console.error("Geocoding API error:", error);
+          setFormData((prev) => ({
+            ...prev,
+            location: `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)}`,
+          }));
         }
-      );
+      });
     }
   }, []);
 
-  // Handle text input changes (title, description)
+  // Handle form input changes
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -36,7 +48,7 @@ const ReportIssues = () => {
     }));
   };
 
-  // Form submit handler
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -48,8 +60,8 @@ const ReportIssues = () => {
     const data = new FormData();
     data.append("title", formData.title);
     data.append("description", formData.description);
-    data.append("category", formData.category); // auto-set
-    data.append("location", formData.location); // auto-detected
+    data.append("category", formData.category);
+    data.append("location", formData.location);
 
     if (mediaFiles) {
       for (let i = 0; i < mediaFiles.length; i++) {
@@ -109,10 +121,10 @@ const ReportIssues = () => {
           />
         </div>
 
-        {/* Category (read-only, hidden input) */}
+        {/* Hidden Category */}
         <input type="hidden" name="category" value={formData.category} />
 
-        {/* Location (read-only display) */}
+        {/* Location (read-only) */}
         <div className="mb-5">
           <label className="block text-[#213e27] font-semibold mb-1">Location (Auto-detected)</label>
           <input
@@ -145,7 +157,7 @@ const ReportIssues = () => {
           Submit Report
         </button>
 
-        {/* Status message */}
+        {/* Status Message */}
         {statusMsg && <p className="mt-4 text-[#209125] font-semibold clear-both">{statusMsg}</p>}
       </form>
     </div>
