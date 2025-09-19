@@ -12,6 +12,11 @@ const Navbar = () => {
     { name: "Contact Us", path: "/ContactUS" },
   ];
 
+  const handleLogout = () => {
+    localStorage.removeItem("authToken"); // Adjust as per your auth token key
+    navigate("/login");
+  };
+
   return (
     <header
       className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#d4e6da] px-10 py-3 shadow-md relative z-50"
@@ -56,13 +61,12 @@ const Navbar = () => {
               }
             >
               {name}
-              {/* Underline animation */}
               <span className="absolute left-0 bottom-[-4px] h-[2px] w-0 bg-rose-500 transition-all duration-300 group-hover:w-full"></span>
             </NavLink>
           ))}
         </nav>
 
-        {/* Search (Expandable Input with hover + click) */}
+        {/* Search */}
         <div
           className="relative flex items-center"
           onMouseEnter={() => setShowSearch(true)}
@@ -73,7 +77,6 @@ const Navbar = () => {
               showSearch ? "w-56 px-2" : "w-10"
             }`}
           >
-            {/* Icon */}
             <button
               onClick={() => setShowSearch(!showSearch)}
               className="flex items-center justify-center text-[#0e1b12] size-10 transition-all duration-300 hover:text-rose-500"
@@ -90,7 +93,6 @@ const Navbar = () => {
               </svg>
             </button>
 
-            {/* Expanding Input */}
             {showSearch && (
               <input
                 type="text"
@@ -118,9 +120,12 @@ const Navbar = () => {
           </svg>
         </button>
 
-        {/* Login Button */}
-        <button className="px-5 py-2 rounded-xl border-2 border-rose-500 bg-white text-rose-500 font-bold text-sm transition-all duration-300 ease-in-out hover:bg-rose-500 hover:text-white hover:shadow-lg hover:shadow-rose-300">
-          Login
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="px-5 py-2 rounded-xl border-2 border-rose-500 bg-white text-rose-500 font-bold text-sm transition-all duration-300 ease-in-out hover:bg-rose-500 hover:text-white hover:shadow-lg hover:shadow-rose-300"
+        >
+          Logout
         </button>
 
         {/* Profile Image Button */}
