@@ -5,6 +5,7 @@ import Footer from "./Components/Footer";
 import ReportIssues from "./Pages/ReportIssues";
 import Analytics from "./Pages/Analytics";
 import Home from "./Pages/Home";
+import Login from "./Pages/Login";
 import ContactUS from "./Pages/ContactUS";
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
             <Route path="/report" element={<ReportIssues />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/ContactUS" element={<ContactUS />} />
+             <Route path="/login" element={<Login />} />
             {/* Optional: Add 404 route */}
             {/* <Route path="*" element={<NotFound />} /> */}
           </Routes>
