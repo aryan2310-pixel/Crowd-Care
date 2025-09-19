@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import LogoutButton from "./LogoutButton";
 
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
@@ -11,11 +12,6 @@ const Navbar = () => {
     { name: "Analytics", path: "/analytics" },
     { name: "Contact Us", path: "/ContactUS" },
   ];
-
-  const handleLogout = () => {
-    localStorage.removeItem("authToken"); // Adjust as per your auth token key
-    navigate("/login");
-  };
 
   return (
     <header
@@ -121,12 +117,7 @@ const Navbar = () => {
         </button>
 
         {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="px-5 py-2 rounded-xl border-2 border-rose-500 bg-white text-rose-500 font-bold text-sm transition-all duration-300 ease-in-out hover:bg-rose-500 hover:text-white hover:shadow-lg hover:shadow-rose-300"
-        >
-          Logout
-        </button>
+        <LogoutButton/>
 
         {/* Profile Image Button */}
         <button

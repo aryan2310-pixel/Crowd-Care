@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     emailOrUsername: "",
     password: "",
   });
+
+  const [statusMsg, setStatusMsg] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -13,10 +17,29 @@ const Login = () => {
     }));
   };
 
-  // Placeholder for future backend integration
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add authentication logic here
+    setStatusMsg("");
+
+    try {
+      const res = await fetch("http://localhost:4000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.token) {
+        localStorage.setItem("authToken", data.token);
+        setStatusMsg("Login successful!");
+        navigate("/home"); // Redirect to home or dashboard after login
+      } else {
+        setStatusMsg(data.msg || "Login failed");
+      }
+    } catch (error) {
+      setStatusMsg("Login error: " + error.message);
+    }
   };
 
   return (
@@ -67,6 +90,9 @@ const Login = () => {
         >
           Log In
         </button>
+        {statusMsg && (
+          <p className="mt-4 text-[#209125] font-semibold text-center">{statusMsg}</p>
+        )}
       </form>
     </div>
   );
