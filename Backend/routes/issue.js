@@ -6,7 +6,7 @@ const { submitIssueWithMedia } = require("../controllers/issueController");
 // Setup multer storage and file naming
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");  // A folder named 'uploads' in backend root; create if not exists
+    cb(null, "uploads/");  // Make sure this folder exists in backend root
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
   },
 });
 
-// File filter (optional, restrict to images or videos)
+// File filter to accept only images/videos
 const fileFilter = (req, file, cb) => {
   if (
     file.mimetype.startsWith("image/") ||
@@ -28,7 +28,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage, fileFilter });
 
-// Route with multer middleware to accept multiple files
+// Route with multer middleware to accept up to 5 files named "mediaFiles"
 router.post("/", upload.array("mediaFiles", 5), submitIssueWithMedia);
 
 module.exports = router;
