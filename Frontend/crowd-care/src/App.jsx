@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import ReportIssues from "./Pages/ReportIssues";
-import About from "./Pages/About";
+import Analytics from "./Pages/Analytics";
 import Home from "./Pages/Home";
 import ContactUS from "./Pages/ContactUS";
 
@@ -16,7 +16,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/report" element={<ReportIssues />} />
-            <Route path="/about" element={<About />} />
+            <Route path="/analytics" element={<Analytics />} />
             <Route path="/ContactUS" element={<ContactUS />} />
             {/* Optional: Add 404 route */}
             {/* <Route path="*" element={<NotFound />} /> */}
