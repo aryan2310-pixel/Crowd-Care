@@ -1,40 +1,55 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const civicIssues = [
-  {
-    id: "#98765",
-    description: "Pothole on Maple Avenue",
-    status: "Resolved",
-    statusClass: "bg-[#e7f3eb] text-[#278542]",
-    dateReported: "2024-07-15",
-    link: "/issues/98765",
-  },
-  {
-    id: "#43210",
-    description: "Broken Streetlight",
-    status: "In Progress",
-    statusClass: "bg-[#f5f5ee] text-[#abab2b]",
-    dateReported: "2024-07-20",
-    link: "/issues/43210",
-  },
-  {
-    id: "#87654",
-    description: "Illegal Dumping",
-    status: "Open",
-    statusClass: "bg-[#f2fbf5] text-[#278542]",
-    dateReported: "2024-07-25",
-    link: "/issues/87654",
-  },
+  { id: "#98765", description: "Pothole on Maple Avenue", status: "Resolved", statusClass: "bg-[#e7f3eb] text-[#278542]", dateReported: "2024-07-15", link: "/issues/98765" },
+  { id: "#43210", description: "Broken Streetlight", status: "In Progress", statusClass: "bg-[#f5f5ee] text-[#abab2b]", dateReported: "2024-07-20", link: "/issues/43210" },
+  { id: "#87654", description: "Illegal Dumping", status: "Open", statusClass: "bg-[#f2fbf5] text-[#278542]", dateReported: "2024-07-25", link: "/issues/87654" },
 ];
 
 const Home = () => {
+  const [userName, setUserName] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchUser() {
+      const token = localStorage.getItem("token"); // JWT token stored after login
+      if (!token) {
+        // Redirect to login if no token
+        navigate("/home");
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/user/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+
+        const data = await response.json();
+        setUserName(data.user.username);
+      } catch (error) {
+        console.error("Error fetching user name:", error);
+        localStorage.removeItem("token"); // Clear invalid token
+        navigate("/login");
+      }
+    }
+
+    fetchUser();
+  }, [navigate]);
+
   return (
     <div className="min-h-screen bg-[#f8fcf8] py-10 px-4 md:px-0 flex justify-center">
       <div className="w-full max-w-3xl bg-[#fcfefc] rounded-xl shadow p-8">
+
         {/* Header */}
         <h1 className="text-3xl font-bold text-[#183a24] mb-1">
-          Welcome, Sophia Bennett
+          Welcome, {userName || "Guest"}
         </h1>
         <p className="text-[#4cb673] mb-7 text-sm">
           Your personalized dashboard for a cleaner, greener community.
@@ -60,18 +75,10 @@ const Home = () => {
             <table className="w-full text-left rounded-lg bg-white">
               <thead>
                 <tr className="bg-[#f5fbf7]">
-                  <th className="px-4 py-2 text-sm text-[#5c7866] font-medium">
-                    Issue ID
-                  </th>
-                  <th className="px-4 py-2 text-sm text-[#5c7866] font-medium">
-                    Description
-                  </th>
-                  <th className="px-4 py-2 text-sm text-[#5c7866] font-medium">
-                    Status
-                  </th>
-                  <th className="px-4 py-2 text-sm text-[#5c7866] font-medium">
-                    Date Reported
-                  </th>
+                  <th className="px-4 py-2 text-sm text-[#5c7866] font-medium">Issue ID</th>
+                  <th className="px-4 py-2 text-sm text-[#5c7866] font-medium">Description</th>
+                  <th className="px-4 py-2 text-sm text-[#5c7866] font-medium">Status</th>
+                  <th className="px-4 py-2 text-sm text-[#5c7866] font-medium">Date Reported</th>
                 </tr>
               </thead>
               <tbody>
@@ -88,9 +95,7 @@ const Home = () => {
                         {status}
                       </span>
                     </td>
-                    <td className="px-4 py-2 text-[#45b464] font-medium">
-                      {dateReported}
-                    </td>
+                    <td className="px-4 py-2 text-[#45b464] font-medium">{dateReported}</td>
                   </tr>
                 ))}
               </tbody>
@@ -108,6 +113,7 @@ const Home = () => {
             Explore Initiatives
           </button>
         </section>
+
       </div>
     </div>
   );
