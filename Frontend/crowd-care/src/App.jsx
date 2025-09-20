@@ -7,6 +7,7 @@ import ReportIssues from "./Pages/ReportIssues";
 import About from "./Pages/About";
 import Home from "./Pages/Home";
 import ContactUS from "./Pages/ContactUS";
+import ProfileSettings from "./Pages/Profile";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
             <Route path="/ContactUS" element={<ContactUS />} />
           </Routes>
         </main>
+        <ProfileSettings/>
         <Footer />
       </div>
     </Router>
