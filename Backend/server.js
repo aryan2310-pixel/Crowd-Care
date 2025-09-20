@@ -7,7 +7,14 @@ require("dotenv").config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // your frontend origin here
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
 
 // Connect to MongoDB
@@ -25,20 +32,13 @@ app.use("/uploads", express.static("uploads"));
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/contact", require("./routes/contact"));
-app.use("/api/issues", require("./routes/issue"));
+app.use("/api/issues", require("./routes/issues")); // You must implement this file with GET route
 app.use("/api/user", require("./routes/user"));
-
 
 // Default route
 app.get("/", (req, res) => {
   res.send("Crowd-Care backend is running");
 });
-
-// // Test user route ✅ (place before 404)
-// app.get("/api/user", (req, res) => {
-//   res.json({ name: "Aryan" });
-// });
-
 
 // 404 handler
 app.use((req, res) => {
@@ -51,10 +51,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, msg: "Server error" });
 });
 
-// Start server
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-
-console.log("JWT_SECRET:", process.env.JWT_SECRET);

@@ -1,36 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const civicIssues = [
-  { id: "#98765", description: "Pothole on Maple Avenue", status: "Resolved", statusClass: "bg-[#e7f3eb] text-[#278542]", dateReported: "2024-07-15", link: "/issues/98765" },
-  { id: "#43210", description: "Broken Streetlight", status: "In Progress", statusClass: "bg-[#f5f5ee] text-[#abab2b]", dateReported: "2024-07-20", link: "/issues/43210" },
-  { id: "#87654", description: "Illegal Dumping", status: "Open", statusClass: "bg-[#f2fbf5] text-[#278542]", dateReported: "2024-07-25", link: "/issues/87654" },
-];
-
 const Home = () => {
   const [userName, setUserName] = useState("");
+  const [issues, setIssues] = useState([]); // reported issues from backend
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchUser() {
       const token = localStorage.getItem("token"); // JWT token stored after login
       if (!token) {
-        // Redirect to login if no token
-        navigate("/home");
+        navigate("/login");
         return;
       }
-
       try {
         const response = await fetch("/api/user/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
         if (!response.ok) {
           throw new Error("Failed to fetch user data");
         }
-
         const data = await response.json();
         setUserName(data.user.username);
       } catch (error) {
@@ -39,14 +32,33 @@ const Home = () => {
         navigate("/login");
       }
     }
-
     fetchUser();
   }, [navigate]);
+
+  useEffect(() => {
+    async function fetchIssues() {
+      setLoading(true);
+      setError("");
+      try {
+        const response = await fetch("http://localhost:4000/api/issues");
+        if (!response.ok) {
+          throw new Error("Failed to fetch issues");
+        }
+        const data = await response.json();
+        setIssues(data.issues || []);
+      } catch (err) {
+        console.error("Error fetching issues:", err);
+        setError("Failed to load reported issues.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchIssues();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#f8fcf8] py-10 px-4 md:px-0 flex justify-center">
       <div className="w-full max-w-3xl bg-[#fcfefc] rounded-xl shadow p-8">
-
         {/* Header */}
         <h1 className="text-3xl font-bold text-[#183a24] mb-1">
           Welcome, {userName || "Guest"}
@@ -56,59 +68,118 @@ const Home = () => {
         </p>
 
         {/* Quick Actions */}
-       <section className="mb-8">
-  <h2 className="font-semibold text-lg mb-3">Quick Actions</h2>
-  <div className="flex gap-4">
-    <Link
-      to="/report"  // Change to your actual issue reporting route path
-      className="bg-[#16ba4c] text-white font-semibold px-5 py-2 rounded-md shadow hover:bg-[#138e3c] transition flex items-center justify-center"
-    >
-      Report an Issue
-    </Link>
-
-    <button className="bg-white border border-[#d7eeda] text-[#1a5425] font-semibold px-5 py-2 rounded-md shadow hover:bg-[#f2f8f4] transition">
-      View My Issues
-    </button>
-  </div>
-</section>
-
-        {/* Local Civic Issues Table */}
         <section className="mb-8">
-          <h2 className="font-semibold text-lg mb-3">Local Civic Issues</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left rounded-lg bg-white">
-              <thead>
-                <tr className="bg-[#f5fbf7]">
-                  <th className="px-4 py-2 text-sm text-[#5c7866] font-medium">Issue ID</th>
-                  <th className="px-4 py-2 text-sm text-[#5c7866] font-medium">Description</th>
-                  <th className="px-4 py-2 text-sm text-[#5c7866] font-medium">Status</th>
-                  <th className="px-4 py-2 text-sm text-[#5c7866] font-medium">Date Reported</th>
-                </tr>
-              </thead>
-              <tbody>
-                {civicIssues.map(({ id, description, status, statusClass, dateReported, link }) => (
-                  <tr key={id} className="border-t border-[#e5f2ea]">
-                    <td className="px-4 py-2 text-base text-[#3e5e47]">{id}</td>
-                    <td className="px-4 py-2">
-                      <Link to={link} className="text-[#40ba73] hover:underline">
-                        {description}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-2">
-                      <span className={`text-xs font-semibold px-3 py-1 rounded-xl ${statusClass}`}>
-                        {status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2 text-[#45b464] font-medium">{dateReported}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <h2 className="font-semibold text-lg mb-3">Quick Actions</h2>
+          <div className="flex gap-4">
+            <Link
+              to="/report"
+              className="bg-[#16ba4c] text-white font-semibold px-5 py-2 rounded-md shadow hover:bg-[#138e3c] transition flex items-center justify-center"
+            >
+              Report an Issue
+            </Link>
+
+            <button className="bg-white border border-[#d7eeda] text-[#1a5425] font-semibold px-5 py-2 rounded-md shadow hover:bg-[#f2f8f4] transition">
+              View My Issues
+            </button>
+          </div>
+        </section>
+
+        {/* Reported Issues Cards */}
+        <section>
+          <h2 className="font-semibold text-lg mb-3">Reported Issues</h2>
+
+          {loading && <p className="text-[#183a24] font-medium">Loading issues...</p>}
+          {error && <p className="text-red-600 font-semibold">{error}</p>}
+
+          {!loading && !error && issues.length === 0 && (
+            <p className="text-[#496a48]">No issues reported yet.</p>
+          )}
+
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
+            {issues.map(
+              ({
+                _id,
+                title,
+                description,
+                category,
+                location,
+                status,
+                dateReported,
+                mediaUrls,
+              }) => (
+                <div
+                  key={_id}
+                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-5 flex flex-col"
+                >
+                  <h3 className="text-[#1a5425] font-semibold text-lg mb-1 truncate" title={title}>
+                    {title}
+                  </h3>
+
+                  {/* Media gallery */}
+                 {mediaUrls && mediaUrls.length > 0 && (
+  <div className="mb-3 flex flex-wrap gap-2 overflow-x-auto">
+    {mediaUrls.map((url, idx) => (
+      url.match(/\.(jpeg|jpg|gif|png|webp)$/i) ? (
+        <img
+          key={idx}
+          src={
+            url.startsWith("http")
+              ? url
+              : `http://localhost:4000/${url.replace(/\\/g, "/")}`
+          }
+          alt={`issue-media-${idx}`}
+          className="h-20 w-auto rounded-md object-cover"
+        />
+      ) : url.match(/\.(mp4|webm|ogg)$/i) ? (
+        <video
+          key={idx}
+          className="h-20 rounded-md"
+          controls
+          src={`http://localhost:4000/${url.replace(/\\/g, "/")}`}
+        />
+      ) : null
+    ))}
+  </div>
+)}
+
+
+                  <p
+                    className="text-[#3e5e47] mb-3 whitespace-pre-wrap break-words"
+                    style={{ maxHeight: 144, overflow: "auto" }}
+                    title={description}
+                  >
+                    {description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <span className="text-xs font-semibold px-2 py-1 bg-[#d1e8d3] text-[#278542] rounded-full">
+                      {category || "Other"}
+                    </span>
+                    <span className="text-xs font-semibold px-2 py-1 bg-[#e6f3e9] text-[#3a663a] rounded-full">
+                      {status || "Open"}
+                    </span>
+                  </div>
+
+                  <p className="text-[#4a7a3c] text-sm mb-2 truncate" title={location}>
+                    Location: {location || "Not specified"}
+                  </p>
+
+                  <p className="text-[#3e5e47] text-xs font-medium mt-auto">
+                    Reported on:{" "}
+                    {new Date(dateReported).toLocaleDateString(undefined, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
+              )
+            )}
           </div>
         </section>
 
         {/* Get Involved Section */}
-        <section>
+        <section className="mt-8">
           <h2 className="font-semibold text-lg mb-2">Get Involved</h2>
           <p className="mb-4 text-[#183a24] text-[15px]">
             Join community initiatives and contribute to a sustainable environment. Explore ongoing projects and events in your area.
@@ -117,7 +188,6 @@ const Home = () => {
             Explore Initiatives
           </button>
         </section>
-
       </div>
     </div>
   );
