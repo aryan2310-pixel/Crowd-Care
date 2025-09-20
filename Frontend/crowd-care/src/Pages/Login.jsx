@@ -2,98 +2,68 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    emailOrUsername: "",
-    password: "",
-  });
-
-  const [statusMsg, setStatusMsg] = useState("");
+  const [emailOrUsername, setEmailOrUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setStatusMsg("");
+    setError("");
 
     try {
-      const res = await fetch("http://localhost:4000/api/auth/login", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ emailOrUsername, password }),
       });
 
-      const data = await res.json();
+      const data = await response.json();
 
-      if (data.success && data.token) {
-        localStorage.setItem("authToken", data.token);
-        setStatusMsg("Login successful!");
-        navigate("/home"); // Redirect to home or dashboard after login
-      } else {
-        setStatusMsg(data.msg || "Login failed");
+      if (!response.ok) {
+        setError(data.msg || "Login failed");
+        return;
       }
-    } catch (error) {
-      setStatusMsg("Login error: " + error.message);
+
+      // Store JWT token in localStorage
+      localStorage.setItem("token", data.token);
+
+      // Redirect to Home page
+      navigate("/Home");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Server error. Try again later.");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fcfefc]">
-      <form
-        className="w-full max-w-md bg-transparent rounded-xl px-4 py-10"
-        onSubmit={handleSubmit}
-      >
-        <h1 className="text-2xl font-bold text-[#183a24] mb-10 text-center">
-          Welcome back
-        </h1>
-        <div className="mb-4">
-          <label className="block text-[#213e27] font-semibold mb-2">
-            Email or Username
-          </label>
+    <div className="min-h-screen flex items-center justify-center bg-[#f8fcf8]">
+      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="text"
-            name="emailOrUsername"
-            placeholder="Enter your email or username"
-            value={formData.emailOrUsername}
-            onChange={handleChange}
-            className="w-full border border-[#b8e7c7] rounded-md bg-[#fff] px-4 py-3 text-[#11c246] placeholder-[#7bb991] transition focus:outline-none focus:border-[#11c246]"
-            required
+            placeholder="Email or Username"
+            value={emailOrUsername}
+            onChange={(e) => setEmailOrUsername(e.target.value)}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
           />
-        </div>
-        <div className="mb-2 mt-6">
-          <label className="block text-[#213e27] font-semibold mb-2">
-            Password
-          </label>
           <input
             type="password"
-            name="password"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full border border-[#b8e7c7] rounded-md bg-[#fff] px-4 py-3 text-[#11c246] placeholder-[#7bb991] transition focus:outline-none focus:border-[#11c246]"
-            required
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
           />
-        </div>
-        <div className="flex justify-start mb-6 mt-2">
-          <a href="/forgot-password" className="text-[#209125] text-sm underline">
-            Forgot password?
-          </a>
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-[#11c246] text-black font-semibold py-3 rounded-md transition hover:bg-[#07a43c] mt-3"
-        >
-          Log In
-        </button>
-        {statusMsg && (
-          <p className="mt-4 text-[#209125] font-semibold text-center">{statusMsg}</p>
-        )}
-      </form>
+          <button
+            type="submit"
+            className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
+          >
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
