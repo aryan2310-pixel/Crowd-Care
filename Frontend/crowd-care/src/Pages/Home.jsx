@@ -56,17 +56,21 @@ const Home = () => {
         </p>
 
         {/* Quick Actions */}
-        <section className="mb-8">
-          <h2 className="font-semibold text-lg mb-3">Quick Actions</h2>
-          <div className="flex gap-4">
-            <button className="bg-[#16ba4c] text-white font-semibold px-5 py-2 rounded-md shadow hover:bg-[#138e3c] transition">
-              Report an Issue
-            </button>
-            <button className="bg-white border border-[#d7eeda] text-[#1a5425] font-semibold px-5 py-2 rounded-md shadow hover:bg-[#f2f8f4] transition">
-              View My Issues
-            </button>
-          </div>
-        </section>
+       <section className="mb-8">
+  <h2 className="font-semibold text-lg mb-3">Quick Actions</h2>
+  <div className="flex gap-4">
+    <Link
+      to="/report"  // Change to your actual issue reporting route path
+      className="bg-[#16ba4c] text-white font-semibold px-5 py-2 rounded-md shadow hover:bg-[#138e3c] transition flex items-center justify-center"
+    >
+      Report an Issue
+    </Link>
+
+    <button className="bg-white border border-[#d7eeda] text-[#1a5425] font-semibold px-5 py-2 rounded-md shadow hover:bg-[#f2f8f4] transition">
+      View My Issues
+    </button>
+  </div>
+</section>
 
         {/* Local Civic Issues Table */}
         <section className="mb-8">
