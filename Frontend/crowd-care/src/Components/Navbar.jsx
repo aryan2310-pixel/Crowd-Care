@@ -7,7 +7,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const navItems = [
-    { name: "Home", path: "/" },
+    { name: "Home", path: "/home" },
     { name: "Report Issue", path: "/report" },
     { name: "Analytics", path: "/analytics" },
     { name: "Contact Us", path: "/ContactUS" },
@@ -35,7 +35,7 @@ const Navbar = () => {
           </svg>
         </div>
         <NavLink
-          to="/"
+          to="/home"
           className="text-[#0e1b12] text-2xl font-extrabold leading-tight tracking-[-0.02em] transition-transform duration-300 hover:scale-110 hover:drop-shadow-lg"
         >
           Crowd-Care
