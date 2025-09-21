@@ -10,7 +10,7 @@ const Footer = () => {
         {/* Brand and About */}
         <div className="flex-1 flex flex-col gap-3">
           <div className="flex items-center gap-3 mb-1">
-            <span className="text-lg font-bold">EcoReport</span>
+            <span className="text-lg font-bold">CrowdCare</span>
           </div>
           <p className="text-sm text-[#32443b]">
             Your trusted source for environmental insights and reporting. Join us in building a greener future.
@@ -71,13 +71,13 @@ const Footer = () => {
         {/* Contact Info */}
         <div className="flex-1 flex flex-col gap-2">
           <span className="font-semibold mb-1">Contact Us</span>
-          <span className="text-sm">support@ecoreport.com</span>
+          <span className="text-sm">support@crowdcare.com</span>
           <span className="text-sm">123 Green Lane, India</span>
           <span className="text-sm">Environment Helpline: +91-12345-67890</span>
         </div>
       </div>
       <div className="text-center text-xs py-4 text-[#607d5f] border-t border-[#b0dbb5]">
-        © {new Date().getFullYear()} EcoReport. All rights reserved.
+        © {new Date().getFullYear()} CrowdCare. All rights reserved.
       </div>
     </footer>
   );
