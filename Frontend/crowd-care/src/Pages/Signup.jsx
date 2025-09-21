@@ -13,7 +13,7 @@ const Signup = () => {
   const [statusMsg, setStatusMsg] = useState("");
   const navigate = useNavigate();
 
-  const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:4000/api";
+  // const apiUrl = process.env.REACT_APP_API_URL ;
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -41,7 +41,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await fetch(`${apiUrl}/auth/signup`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
