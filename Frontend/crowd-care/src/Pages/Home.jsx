@@ -1,3 +1,4 @@
+/* global process */
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -40,7 +41,7 @@ const Home = () => {
       setLoading(true);
       setError("");
       try {
-        const response = await fetch("http://localhost:4000/api/issues");
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/issues`);
         if (!response.ok) {
           throw new Error("Failed to fetch issues");
         }
@@ -111,37 +112,39 @@ const Home = () => {
                   key={_id}
                   className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-5 flex flex-col"
                 >
-                  <h3 className="text-[#1a5425] font-semibold text-lg mb-1 truncate" title={title}>
+                  <h3
+                    className="text-[#1a5425] font-semibold text-lg mb-1 truncate"
+                    title={title}
+                  >
                     {title}
                   </h3>
 
                   {/* Media gallery */}
-                 {mediaUrls && mediaUrls.length > 0 && (
-  <div className="mb-3 flex flex-wrap gap-2 overflow-x-auto">
-    {mediaUrls.map((url, idx) => (
-      url.match(/\.(jpeg|jpg|gif|png|webp)$/i) ? (
-        <img
-          key={idx}
-          src={
-            url.startsWith("http")
-              ? url
-              : `http://localhost:4000/${url.replace(/\\/g, "/")}`
-          }
-          alt={`issue-media-${idx}`}
-          className="h-20 w-auto rounded-md object-cover"
-        />
-      ) : url.match(/\.(mp4|webm|ogg)$/i) ? (
-        <video
-          key={idx}
-          className="h-20 rounded-md"
-          controls
-          src={`http://localhost:4000/${url.replace(/\\/g, "/")}`}
-        />
-      ) : null
-    ))}
-  </div>
-)}
-
+                  {mediaUrls && mediaUrls.length > 0 && (
+                    <div className="mb-3 flex flex-wrap gap-2 overflow-x-auto">
+                      {mediaUrls.map((url, idx) =>
+                        url.match(/\.(jpeg|jpg|gif|png|webp)$/i) ? (
+                          <img
+                            key={idx}
+                            src={
+                              url.startsWith("http")
+                                ? url
+                                : `${process.env.REACT_APP_API_URL}/${url.replace(/\\/g, "/")}`
+                            }
+                            alt={`issue-media-${idx}`}
+                            className="h-20 w-auto rounded-md object-cover"
+                          />
+                        ) : url.match(/\.(mp4|webm|ogg)$/i) ? (
+                          <video
+                            key={idx}
+                            className="h-20 rounded-md"
+                            controls
+                            src={`${process.env.REACT_APP_API_URL}/${url.replace(/\\/g, "/")}`}
+                          />
+                        ) : null
+                      )}
+                    </div>
+                  )}
 
                   <p
                     className="text-[#3e5e47] mb-3 whitespace-pre-wrap break-words"
@@ -182,7 +185,8 @@ const Home = () => {
         <section className="mt-8">
           <h2 className="font-semibold text-lg mb-2">Get Involved</h2>
           <p className="mb-4 text-[#183a24] text-[15px]">
-            Join community initiatives and contribute to a sustainable environment. Explore ongoing projects and events in your area.
+            Join community initiatives and contribute to a sustainable environment. Explore ongoing projects and events in your
+            area.
           </p>
           <button className="px-5 py-2 rounded-md bg-[#f3faf4] text-[#1a5425] font-semibold shadow border border-[#dbeee0] hover:bg-[#e5f4ea] transition">
             Explore Initiatives

@@ -1,3 +1,4 @@
+/* global process */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,6 +12,8 @@ const Signup = () => {
 
   const [statusMsg, setStatusMsg] = useState("");
   const navigate = useNavigate();
+
+  const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:4000/api";
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -38,7 +41,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:4000/api/auth/signup", {
+      const res = await fetch(`${apiUrl}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
