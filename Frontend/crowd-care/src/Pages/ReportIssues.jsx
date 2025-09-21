@@ -1,3 +1,4 @@
+/* global process */
 import React, { useState, useEffect } from "react";
 
 const ReportIssues = () => {
@@ -10,6 +11,8 @@ const ReportIssues = () => {
 
   const [mediaFiles, setMediaFiles] = useState(null);
   const [statusMsg, setStatusMsg] = useState("");
+
+  const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:4000/api";
 
   // Use LocationIQ reverse geocoding with error logging
   useEffect(() => {
@@ -70,7 +73,7 @@ const ReportIssues = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:4000/api/issues", {
+      const response = await fetch(`${apiUrl}/issues`, {
         method: "POST",
         body: data,
       });
@@ -81,7 +84,7 @@ const ReportIssues = () => {
         setMediaFiles(null);
         e.target.reset();
       } else {
-        setStatusMsg("Failed to report issue: " + result.msg);
+        setStatusMsg("Failed to report issue: " + (result.msg || "Unknown error"));
       }
     } catch (error) {
       setStatusMsg("Error submitting issue: " + error.message);
@@ -90,7 +93,10 @@ const ReportIssues = () => {
 
   return (
     <div className="min-h-screen bg-[#f8fcf8] py-10 px-4 md:px-0 flex justify-center">
-      <form className="w-full max-w-2xl bg-[#fcfefc] rounded-xl shadow p-8" onSubmit={handleSubmit}>
+      <form
+        className="w-full max-w-2xl bg-[#fcfefc] rounded-xl shadow p-8"
+        onSubmit={handleSubmit}
+      >
         <h1 className="text-2xl font-bold text-[#183a24] mb-8">Report a New Issue</h1>
 
         {/* Issue Title */}
@@ -158,7 +164,9 @@ const ReportIssues = () => {
         </button>
 
         {/* Status Message */}
-        {statusMsg && <p className="mt-4 text-[#209125] font-semibold clear-both">{statusMsg}</p>}
+        {statusMsg && (
+          <p className="mt-4 text-[#209125] font-semibold clear-both">{statusMsg}</p>
+        )}
       </form>
     </div>
   );
