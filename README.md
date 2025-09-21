@@ -22,10 +22,10 @@ A web-based platform that empowers citizens to report local issues with **geo-ta
 
 - **Frontend:** React + Tailwind CSS  
 - **Backend:** Node.js / Express  
-- **Database:** MongoDB / PostgreSQL  
-- **Authentication:** JWT / OAuth2  
-- **Geo-tagging & Maps:** Google Maps API / Leaflet  
-- **Notifications:** Firebase / Web Push  
+- **Database:** MongoDB   
+- **Authentication:** JWT   
+- **Geo-tagging & Maps:**   
+- **Notifications:** Firebase   
 
 ---
 
@@ -33,7 +33,7 @@ A web-based platform that empowers citizens to report local issues with **geo-ta
 
 1. Citizen submits issue (geo-tag + photo + description).  
 2. System auto-assigns based on category & location.  
-3. Government officials update status & upload proof.  
+3. Government officials update status.  
 4. Citizen gets notified and can give feedback.  
 5. Analytics dashboard shows system-wide statistics.  
 
