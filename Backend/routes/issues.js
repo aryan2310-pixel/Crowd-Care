@@ -7,7 +7,7 @@ const Issue = require("../models/Issue"); // Adjust path accordingly
 // Setup multer storage and file naming
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");  // Make sure this folder exists in backend root
+    cb(null, "uploads/"); // Make sure this folder exists in backend root
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -42,5 +42,28 @@ router.get("/", async (req, res) => {
 
 // Route: POST /api/issues - submit new issue with media files
 router.post("/", upload.array("mediaFiles", 5), submitIssueWithMedia);
+
+// Route: PATCH /api/issues/:id - update issue's status
+router.patch("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const updatedIssue = await Issue.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedIssue) {
+      return res.status(404).json({ success: false, msg: "Issue not found" });
+    }
+
+    res.json({ success: true, issue: updatedIssue });
+  } catch (error) {
+    console.error("Error updating issue status:", error);
+    res.status(500).json({ success: false, msg: "Failed to update issue status" });
+  }
+});
 
 module.exports = router;
