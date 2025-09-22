@@ -1,50 +1,53 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [userName, setUserName] = useState("");
-  const [issues, setIssues] = useState([]); // reported issues from backend
+  const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Fetch logged-in user info
   useEffect(() => {
     async function fetchUser() {
-      const token = localStorage.getItem("token"); // JWT token stored after login
-      if (!token) {
-        navigate("/login");
-        return;
-      }
+      const token = localStorage.getItem("token");
       try {
-        const response = await fetch("/api/user/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch user data");
-        }
+        const response = await fetch(
+          "https://crowd-care-r1ub.onrender.com/api/user/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch user data");
+
         const data = await response.json();
         setUserName(data.user.username);
       } catch (error) {
         console.error("Error fetching user name:", error);
-        localStorage.removeItem("token"); // Clear invalid token
+        localStorage.removeItem("token");
         navigate("/login");
       }
     }
+
     fetchUser();
   }, [navigate]);
 
+  // Fetch reported issues
   useEffect(() => {
     async function fetchIssues() {
       setLoading(true);
       setError("");
       try {
-        const response = await fetch(`http://crowd-care-r1ub.onrender.com/api/issues`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch issues");
-        }
+        const response = await fetch(
+          "https://crowd-care-r1ub.onrender.com/api/issues"
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch issues");
+
         const data = await response.json();
         setIssues(data.issues || []);
       } catch (err) {
@@ -54,6 +57,7 @@ const Home = () => {
         setLoading(false);
       }
     }
+
     fetchIssues();
   }, []);
 
@@ -91,7 +95,6 @@ const Home = () => {
 
           {loading && <p className="text-[#183a24] font-medium">Loading issues...</p>}
           {error && <p className="text-red-600 font-semibold">{error}</p>}
-
           {!loading && !error && issues.length === 0 && (
             <p className="text-[#496a48]">No issues reported yet.</p>
           )}
@@ -127,9 +130,12 @@ const Home = () => {
                           <img
                             key={idx}
                             src={
-                              url.startsWith("http")
+                              url.startsWith("https")
                                 ? url
-                                : `$http://crowd-care-r1ub.onrender.com/api/${url.replace(/\\/g, "/")}`
+                                : `https://crowd-care-r1ub.onrender.com/${url.replace(
+                                    /\\/g,
+                                    "/"
+                                  )}`
                             }
                             alt={`issue-media-${idx}`}
                             className="h-20 w-auto rounded-md object-cover"
@@ -139,7 +145,10 @@ const Home = () => {
                             key={idx}
                             className="h-20 rounded-md"
                             controls
-                            src={`http://crowd-care-r1ub.onrender.com/api/${url.replace(/\\/g, "/")}`}
+                            src={`https://crowd-care-r1ub.onrender.com/api/${url.replace(
+                              /\\/g,
+                              "/"
+                            )}`}
                           />
                         ) : null
                       )}
@@ -185,8 +194,8 @@ const Home = () => {
         <section className="mt-8">
           <h2 className="font-semibold text-lg mb-2">Get Involved</h2>
           <p className="mb-4 text-[#183a24] text-[15px]">
-            Join community initiatives and contribute to a sustainable environment. Explore ongoing projects and events in your
-            area.
+            Join community initiatives and contribute to a sustainable environment.
+            Explore ongoing projects and events in your area.
           </p>
           <button className="px-5 py-2 rounded-md bg-[#f3faf4] text-[#1a5425] font-semibold shadow border border-[#dbeee0] hover:bg-[#e5f4ea] transition">
             Explore Initiatives
