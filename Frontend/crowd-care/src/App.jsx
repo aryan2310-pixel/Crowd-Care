@@ -9,11 +9,16 @@ import {
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import Home from "./Pages/Home";
-import Signup from "./Pages/Signup";      // import Signup here
+import Signup from "./Pages/Signup";
 import Login from "./Pages/Login";
 import ReportIssues from "./Pages/ReportIssues";
 import Analytics from "./Pages/Analytics";
 import ContactUS from "./Pages/ContactUS";
+
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem("token");
+  return token ? children : <Navigate to="/login" replace />;
+};
 
 const AppWrapper = () => {
   const location = useLocation();
@@ -28,10 +33,41 @@ const AppWrapper = () => {
           <Route path="/" element={<Navigate to="/signup" />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/report" element={<ReportIssues />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/ContactUS" element={<ContactUS />} />
-          <Route path="/home" element={<Home />} />
+          
+          {/* Protected Routes */}
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/report"
+            element={
+              <ProtectedRoute>
+                <ReportIssues />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <Analytics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contactus"
+            element={
+              <ProtectedRoute>
+                <ContactUS />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Optional 404 */}
           {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>

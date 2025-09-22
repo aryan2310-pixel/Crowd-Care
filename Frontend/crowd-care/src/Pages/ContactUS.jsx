@@ -21,7 +21,7 @@ const ContactUS = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://crowd-care-r1ub.onrender.com/api/contact`, {
+      const response = await fetch(`https://crowd-care-r1ub.onrender.com/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

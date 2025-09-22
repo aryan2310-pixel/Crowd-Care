@@ -12,11 +12,14 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await fetch("https://crowd-care-r1ub.onrender.com/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emailOrUsername, password }),
-      });
+      const response = await fetch(
+        "https://crowd-care-r1ub.onrender.com/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ emailOrUsername, password }),
+        }
+      );
 
       const data = await response.json();
 
@@ -25,11 +28,30 @@ const Login = () => {
         return;
       }
 
-      // Store JWT token in localStorage
+      // ✅ Store JWT token
       localStorage.setItem("token", data.token);
 
-      // Redirect to Home page
-      navigate("/Home");
+      // ✅ (Optional) fetch user immediately after login
+      const meRes = await fetch(
+        "https://crowd-care-r1ub.onrender.com/api/auth/me",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${data.token}`, // 🔑 Send token
+          },
+        }
+      );
+
+      if (meRes.ok) {
+        const meData = await meRes.json();
+        console.log("Logged in user:", meData.user);
+
+        // You can also store user info in localStorage if needed
+        localStorage.setItem("user", JSON.stringify(meData.user));
+      }
+
+      // ✅ Redirect to Home
+      navigate("/home");
     } catch (err) {
       console.error("Login error:", err);
       setError("Server error. Try again later.");
@@ -48,6 +70,7 @@ const Login = () => {
             value={emailOrUsername}
             onChange={(e) => setEmailOrUsername(e.target.value)}
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+            required
           />
           <input
             type="password"
@@ -55,6 +78,7 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+            required
           />
           <button
             type="submit"

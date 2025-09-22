@@ -73,7 +73,7 @@ const ReportIssues = () => {
     }
 
     try {
-      const response = await fetch(`http://crowd-care-r1ub.onrender.com/api/issues`, {
+      const response = await fetch(`https://crowd-care-r1ub.onrender.com/api/issues`, {
         method: "POST",
         body: data,
       });
