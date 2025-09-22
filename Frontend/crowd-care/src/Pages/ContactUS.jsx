@@ -1,4 +1,4 @@
-/* global process */
+
 import React, { useState } from "react";
 
 const ContactUS = () => {
@@ -21,7 +21,7 @@ const ContactUS = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/contact`, {
+      const response = await fetch(`http://crowd-care-r1ub.onrender.com/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

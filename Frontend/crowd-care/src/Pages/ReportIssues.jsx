@@ -1,4 +1,4 @@
-/* global process */
+
 import React, { useState, useEffect } from "react";
 
 const ReportIssues = () => {
@@ -12,7 +12,7 @@ const ReportIssues = () => {
   const [mediaFiles, setMediaFiles] = useState(null);
   const [statusMsg, setStatusMsg] = useState("");
 
-  const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:4000/api";
+
 
   // Use LocationIQ reverse geocoding with error logging
   useEffect(() => {
@@ -73,7 +73,7 @@ const ReportIssues = () => {
     }
 
     try {
-      const response = await fetch(`${apiUrl}/issues`, {
+      const response = await fetch(`http://crowd-care-r1ub.onrender.com/api/issues`, {
         method: "POST",
         body: data,
       });

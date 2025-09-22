@@ -1,4 +1,4 @@
-/* global process */
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -41,7 +41,7 @@ const Home = () => {
       setLoading(true);
       setError("");
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/issues`);
+        const response = await fetch(`http://crowd-care-r1ub.onrender.com/api/issues`);
         if (!response.ok) {
           throw new Error("Failed to fetch issues");
         }
@@ -129,7 +129,7 @@ const Home = () => {
                             src={
                               url.startsWith("http")
                                 ? url
-                                : `${process.env.REACT_APP_API_URL}/${url.replace(/\\/g, "/")}`
+                                : `$http://crowd-care-r1ub.onrender.com/api/${url.replace(/\\/g, "/")}`
                             }
                             alt={`issue-media-${idx}`}
                             className="h-20 w-auto rounded-md object-cover"
@@ -139,7 +139,7 @@ const Home = () => {
                             key={idx}
                             className="h-20 rounded-md"
                             controls
-                            src={`${process.env.REACT_APP_API_URL}/${url.replace(/\\/g, "/")}`}
+                            src={`http://crowd-care-r1ub.onrender.com/api/${url.replace(/\\/g, "/")}`}
                           />
                         ) : null
                       )}
