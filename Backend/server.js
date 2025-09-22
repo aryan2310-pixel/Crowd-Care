@@ -9,12 +9,14 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: [ "crowdcare.netlify.app"], // your frontend origin here
+    origin: [ "https://crowdcare.netlify.app"], // your frontend origin here
     methods: ["GET", "POST", 'PATCH', "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
      credentials: true
   })
 );
+
+
 
 app.use(express.json());
 
