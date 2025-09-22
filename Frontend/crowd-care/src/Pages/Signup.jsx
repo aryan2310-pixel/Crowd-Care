@@ -1,4 +1,4 @@
-/* global process */
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -41,7 +41,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/signup`, {
+      const res = await fetch(`https://crowd-care-r1ub.onrender.com/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
